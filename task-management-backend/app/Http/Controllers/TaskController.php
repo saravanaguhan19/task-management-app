@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Task;
-use App\Http\Requests\StoreTaskRequest;
-use App\Http\Requests\UpdateTaskRequest;
+
+use Illuminate\Http\Request;
 
 class TaskController extends Controller
 {
@@ -14,14 +14,24 @@ class TaskController extends Controller
     public function index()
     {
         //
+        return Task::all();
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreTaskRequest $request)
+    public function store(Request $request)
     {
-        //
+        $fields =$request->validate([
+            'title'=>'required|max:255',
+            'description'=>'required'
+        ]);
+
+        $task=Task::create($fields);
+
+
+
+        return ['task'=> $task];
     }
 
     /**
