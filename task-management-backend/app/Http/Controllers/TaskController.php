@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Task;
-
+use  App\Helpers\FormatResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
@@ -25,13 +25,25 @@ class TaskController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        Gate::authorize('view');
+        // Gate::authorize('view');
         // dd(Task::with('user')->latest()->get());
         // return Task::with('user')->latest()->get();
+        $user = $request->user();
 
-        return Task::all();
+
+        // $tasks = Task::with(' user_id' , $user->id )->get();
+        $tasks = $user->tasks;
+
+        if($tasks->isEmpty()){
+            return FormatResponse::success($tasks,"Task not found" , 202);
+        }
+
+        // return FormatResponse::success($tasks,"Task not found");
+        return FormatResponse::success( $tasks);
+        // return FormatResponse::success( $user->id);
+
     }
 
     /**
@@ -59,8 +71,9 @@ class TaskController extends Controller
         // $task = Task::create($request->all());
         // $task = Task::create($fields);
         $task = $request->user()->tasks()->create($request->all());
+        // $task = $request->user();
 
-        return ['task' => $task];
+        return  FormatResponse::success( $task);
     }
 
     /**
@@ -68,7 +81,7 @@ class TaskController extends Controller
      */
     public function show(Task $task)
     {
-        return $task;
+        return  FormatResponse::success( $task);
     }
 
     /**
@@ -86,7 +99,7 @@ class TaskController extends Controller
 
         $task->update($fields);
 
-        return $task;
+        return FormatResponse::success($task , "task updated successfully" );
     }
 
     /**
@@ -94,8 +107,9 @@ class TaskController extends Controller
      */
     public function destroy(Task $task)
     {
-        $task->delete();
-
-        return ["message" => "task deleted successfully"];
+        Gate::authorize('modify', $task);
+        $deletedTask =$task->delete();
+// task deleted successfully
+        return FormatResponse::success($deletedTask , "task deleted successfully" );
     }
 }

@@ -5,37 +5,36 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
-use App\Traits\ResponseTrait;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
 
-    use ResponseTrait;
+  
 
     public function register(Request $request){
 
-        // $fields =$request->validate([
-        //     "name" => 'required|max:255',
-        //     "email"=> 'required|email|unique:users',
-        //     "password"=> 'required|confirmed'
-        // ]);
+        $fields =$request->validate([
+            "name" => 'required|max:255',
+            "email"=> 'required|email|unique:users',
+            "password"=> 'required|confirmed'
+        ]);
 
-        // $user = User::create($fields);
+        $user = User::create($fields);
 
-        // $token = $user->createToken($request->name);
+        $token = $user->createToken($request->name);
 
 
-        // return response()->json([
-        //     'user'=> $user,
-        //     'token'=> $token->plainTextToken
-        // ]);
+        return response()->json([
+            'user'=> $user,
+            'token'=> $token->plainTextToken
+        ]);
 
         // throw new Exception("Hi");
 
-        return $this->formatResponse([
-            'message' => 'error'
-        ], 501);
+        // return $this->formatResponse([
+        //     'message' => 'error'
+        // ], 501);
         
         
 
