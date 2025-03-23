@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Task;
 use  App\Helpers\FormatResponse;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
@@ -79,12 +80,27 @@ class TaskController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Task $task)
+    public function show($id)
     {   
-      
         
+        // if($task->isEmpty()){
+        //     return FormatResponse::success($task,"Task not found" , 202);
+        // }
 
-        return  FormatResponse::success( $task);
+        // return $id;
+
+        try{
+            $givenTask = Task::findOrFail($id);
+            return  FormatResponse::success( $givenTask);
+        }catch (ModelNotFoundException $e){
+
+            return FormatResponse::success([],"Task not found" , 202);
+        }
+
+
+
+
+
     }
 
     /**

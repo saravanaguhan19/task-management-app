@@ -14,7 +14,7 @@ use App\Http\Middleware\ForceJsonRequestHeader;
 
 Route::middleware([ForceJsonRequestHeader::class,'auth:sanctum'])->group(function () {
   Route::apiResource('tasks', TaskController::class);
-  Route::patch('/tasks/{task}/status' , [TaskController::Class , 'updateStatus']);
+  Route::patch('/tasks/{task}/status' , [TaskController::class , 'updateStatus']);
 
 });
 Route::post('/register', [AuthController::class, 'register']);
