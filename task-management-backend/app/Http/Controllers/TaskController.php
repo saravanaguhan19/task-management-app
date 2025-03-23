@@ -80,7 +80,10 @@ class TaskController extends Controller
      * Display the specified resource.
      */
     public function show(Task $task)
-    {
+    {   
+      
+        
+
         return  FormatResponse::success( $task);
     }
 
@@ -101,6 +104,34 @@ class TaskController extends Controller
 
         return FormatResponse::success($task , "task updated successfully" );
     }
+
+    public function updateStatus(Request $request , Task $task){
+
+        Gate::authorize('modify' , $task);
+
+        $request->validate([
+            'status' => 'required|in:Pending,Completed'
+        ]);
+
+        
+        // $validator = Validator::make($request->all(), [
+        //     'title' => 'required|max:255',
+        //     'description' => 'required',
+        // ]);
+
+
+        // if($validator->fails()){
+        //     return ["message"=> $validator->errors()];
+        // }
+
+
+
+        $task->update(['status'=>$request->status]);
+
+        return FormatResponse::success([] , "Task updated successfully");
+
+    }
+
 
     /**
      * Remove the specified resource from storage.

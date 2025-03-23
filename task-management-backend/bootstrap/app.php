@@ -1,5 +1,5 @@
 <?php
-
+use App\Http\Middleware\ForceJsonRequestHeader;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -13,7 +13,19 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         //
+        $middleware->append(ForceJsonRequestHeader::class);
+
+        $middleware->priority([
+            ForceJsonRequestHeader::class
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        return "exception handeled";
+           // custom response sanctum
+           $exceptions->render(function (AuthenticationException $e, Request $request) {
+
+            return response()->json([
+                'message' => 'Not Authorized',
+                'my_custom' => 'custom_field'
+            ], 401);
+        });
     })->create();
