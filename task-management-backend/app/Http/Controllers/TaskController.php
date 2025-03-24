@@ -19,15 +19,14 @@ class TaskController extends Controller
      */
     public function index(Request $request)
     {
-        $user = $request->user();   
+        $user = $request->user();
         $tasks = $user->tasks;
 
-        if($tasks->isEmpty()){
-            return FormatResponse::success($tasks,"Task not found" , 200);
+        if ($tasks->isEmpty()) {
+            return FormatResponse::success($tasks, "Task not found", 200);
         }
-    
-        return FormatResponse::success( $tasks);
 
+        return FormatResponse::success($tasks);
     }
 
     /**
@@ -36,35 +35,34 @@ class TaskController extends Controller
     public function store(Request $request)
     {
 
-       $validator = Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             'title' => 'required|string|max:255',
             'description' => 'required|string'
         ]);
 
 
-        if($validator->fails()){
-            
-            return FormatResponse::error("Error" , 400 , $validator->errors());
+        if ($validator->fails()) {
+
+            return FormatResponse::error("Error", 400, $validator->errors());
         }
-        
+
         $task = $request->user()->tasks()->create($request->all());
-      
-        return  FormatResponse::success( $task,"Task created successfully");
+
+        return  FormatResponse::success($task, "Task created successfully");
     }
 
     /**
      * Display the specified resource.
      */
     public function show($id)
-    {   
-        
-        try{
-            $givenTask = Task::findOrFail($id);
-            return  FormatResponse::success( $givenTask);
-        }catch (ModelNotFoundException $e){
-            return FormatResponse::success([],"Task not found" , 202);
-        }
+    {
 
+        try {
+            $givenTask = Task::findOrFail($id);
+            return  FormatResponse::success($givenTask);
+        } catch (ModelNotFoundException $e) {
+            return FormatResponse::success([], "Task not found", 202);
+        }
     }
 
     /**
@@ -87,27 +85,28 @@ class TaskController extends Controller
         ]);
 
 
-        if($validator->fails()){
+        if ($validator->fails()) {
             // return ["message"=> $validator->errors()];
-            return FormatResponse::error("Error" , 400 , $validator->errors());
+            return FormatResponse::error("Error", 400, $validator->errors());
         }
 
-    
+
 
         $task->update($request->all());
 
-        return FormatResponse::success($task , "task updated successfully" );
+        return FormatResponse::success($task, "task updated successfully");
     }
 
-    public function updateStatus(Request $request , Task $task){
+    public function updateStatus(Request $request, Task $task)
+    {
 
-        Gate::authorize('modify' , $task);
+        Gate::authorize('modify', $task);
 
         $request->validate([
             'status' => 'required|in:Pending,Completed'
         ]);
 
-        
+
         // $validator = Validator::make($request->all(), [
         //     'status' => 'required|in:Pending,Completed'
         // ]);
@@ -116,9 +115,8 @@ class TaskController extends Controller
         //     return FormatResponse::error("Error" , 400 , $validator->errors());
         // }
 
-        $task->update(['status'=>$request->status]);
-        return FormatResponse::success([] , "Task updated successfully");
-
+        $task->update(['status' => $request->status]);
+        return FormatResponse::success([], "Task updated successfully");
     }
 
 
@@ -128,7 +126,7 @@ class TaskController extends Controller
     public function destroy(Task $task)
     {
         Gate::authorize('modify', $task);
-        $deletedTask =$task->delete();
-        return FormatResponse::success($deletedTask , "task deleted successfully" );
+        $deletedTask = $task->delete();
+        return FormatResponse::success($deletedTask, "task deleted successfully");
     }
 }
