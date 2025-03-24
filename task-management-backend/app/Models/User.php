@@ -11,7 +11,7 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable , HasApiTokens;
+    use HasFactory, Notifiable, HasApiTokens;
 
     /**
      * The attributes that are mass assignable.
@@ -31,7 +31,7 @@ class User extends Authenticatable
      */
     protected $hidden = [
         'password',
-       
+
     ];
 
     /**
@@ -42,12 +42,16 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            
+
             'password' => 'hashed',
+            'created_at' => 'datetime:Y-m-d',
+            'updated_at' => 'datetime:Y-m-d'
         ];
     }
 
-    public function tasks(){
+
+    public function tasks()
+    {
 
         return $this->hasMany(Task::class);
     }

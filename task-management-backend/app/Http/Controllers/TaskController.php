@@ -19,9 +19,7 @@ class TaskController extends Controller
      */
     public function index(Request $request)
     {
-
-        $user = $request->user();
-        
+        $user = $request->user();   
         $tasks = $user->tasks;
 
         if($tasks->isEmpty()){
@@ -37,29 +35,20 @@ class TaskController extends Controller
      */
     public function store(Request $request)
     {
-        // $request->validate([
-        //     'title' => 'required|string|max:255',
-        //     'description' => 'required|string'
-        // ]);
 
-
-
-        $validator = Validator::make($request->all(), [
+       $validator = Validator::make($request->all(), [
             'title' => 'required|string|max:255',
             'description' => 'required|string'
         ]);
 
 
         if($validator->fails()){
-            // return ["message"=> $validator->errors()];
+            
             return FormatResponse::error("Error" , 400 , $validator->errors());
         }
-
-        // $task = Task::create($request->all());
-        // $task = Task::create($fields);
+        
         $task = $request->user()->tasks()->create($request->all());
-        // $task = $request->user();
-
+      
         return  FormatResponse::success( $task,"Task created successfully");
     }
 
@@ -73,7 +62,6 @@ class TaskController extends Controller
             $givenTask = Task::findOrFail($id);
             return  FormatResponse::success( $givenTask);
         }catch (ModelNotFoundException $e){
-
             return FormatResponse::success([],"Task not found" , 202);
         }
 
@@ -120,17 +108,15 @@ class TaskController extends Controller
         ]);
 
         
-        $validator = Validator::make($request->all(), [
-            'status' => 'required|in:Pending,Completed'
-        ]);
+        // $validator = Validator::make($request->all(), [
+        //     'status' => 'required|in:Pending,Completed'
+        // ]);
 
-
-        if($validator->fails()){
-            return FormatResponse::error("Error" , 400 , $validator->errors());
-        }
+        // if($validator->fails()){
+        //     return FormatResponse::error("Error" , 400 , $validator->errors());
+        // }
 
         $task->update(['status'=>$request->status]);
-
         return FormatResponse::success([] , "Task updated successfully");
 
     }
