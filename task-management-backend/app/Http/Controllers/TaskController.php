@@ -14,36 +14,21 @@ use Illuminate\Support\Facades\Validator;
 class TaskController extends Controller
 {
 
-    // public static function middleware()
-    // {
-    //     return [
-    //         new Middleware('auth:sanctum', ['index'])
-    //     ];
-    // }
-
-
-
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        // Gate::authorize('view');
-        // dd(Task::with('user')->latest()->get());
-        // return Task::with('user')->latest()->get();
+
         $user = $request->user();
-
-
-        // $tasks = Task::with(' user_id' , $user->id )->get();
+        
         $tasks = $user->tasks;
 
         if($tasks->isEmpty()){
-            return FormatResponse::success($tasks,"Task not found" , 202);
+            return FormatResponse::success($tasks,"Task not found" , 200);
         }
-
-        // return FormatResponse::success($tasks,"Task not found");
+    
         return FormatResponse::success( $tasks);
-        // return FormatResponse::success( $user->id);
 
     }
 
@@ -52,29 +37,30 @@ class TaskController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        // $request->validate([
+        //     'title' => 'required|string|max:255',
+        //     'description' => 'required|string'
+        // ]);
+
+
+
+        $validator = Validator::make($request->all(), [
             'title' => 'required|string|max:255',
             'description' => 'required|string'
         ]);
 
 
-
-        // $validator = Validator::make($request->all(), [
-        //     'title' => 'required|max:255',
-        //     'description' => 'required',
-        // ]);
-
-
-        // if($validator->fails()){
-        //     return ["message"=> $validator->errors()];
-        // }
+        if($validator->fails()){
+            // return ["message"=> $validator->errors()];
+            return FormatResponse::error("Error" , 400 , $validator->errors());
+        }
 
         // $task = Task::create($request->all());
         // $task = Task::create($fields);
         $task = $request->user()->tasks()->create($request->all());
         // $task = $request->user();
 
-        return  FormatResponse::success( $task);
+        return  FormatResponse::success( $task,"Task created successfully");
     }
 
     /**
@@ -83,8 +69,6 @@ class TaskController extends Controller
     public function show($id)
     {   
         
-       
-
         try{
             $givenTask = Task::findOrFail($id);
             return  FormatResponse::success( $givenTask);
@@ -92,10 +76,6 @@ class TaskController extends Controller
 
             return FormatResponse::success([],"Task not found" , 202);
         }
-
-
-
-
 
     }
 
@@ -106,13 +86,27 @@ class TaskController extends Controller
     {
         Gate::authorize('modify', $task);
 
-        $fields = $request->validate([
+        // $fields = $request->validate([
+        //     'title' => 'required|max:255',
+        //     'description' => 'required',
+        //     'status' => 'max:255'
+        // ]);
+
+        $validator = Validator::make($request->all(), [
             'title' => 'required|max:255',
             'description' => 'required',
             'status' => 'max:255'
         ]);
 
-        $task->update($fields);
+
+        if($validator->fails()){
+            // return ["message"=> $validator->errors()];
+            return FormatResponse::error("Error" , 400 , $validator->errors());
+        }
+
+    
+
+        $task->update($request->all());
 
         return FormatResponse::success($task , "task updated successfully" );
     }
@@ -126,17 +120,14 @@ class TaskController extends Controller
         ]);
 
         
-        // $validator = Validator::make($request->all(), [
-        //     'title' => 'required|max:255',
-        //     'description' => 'required',
-        // ]);
+        $validator = Validator::make($request->all(), [
+            'status' => 'required|in:Pending,Completed'
+        ]);
 
 
-        // if($validator->fails()){
-        //     return ["message"=> $validator->errors()];
-        // }
-
-
+        if($validator->fails()){
+            return FormatResponse::error("Error" , 400 , $validator->errors());
+        }
 
         $task->update(['status'=>$request->status]);
 
@@ -152,7 +143,6 @@ class TaskController extends Controller
     {
         Gate::authorize('modify', $task);
         $deletedTask =$task->delete();
-// task deleted successfully
         return FormatResponse::success($deletedTask , "task deleted successfully" );
     }
 }

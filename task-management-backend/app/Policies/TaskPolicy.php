@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Helpers\FormatResponse;
 use App\Models\Task;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
@@ -16,12 +17,9 @@ class TaskPolicy
 
     public function modify(User $user, Task $task): Response
     {
-        return $user->id === $task->user_id ? Response::allow() : Response::deny('you are not authorized to delete a post');
+       
+        return $user->id === $task->user_id ? Response::allow() :  Response::deny('you are not authorized to update/delete a post') ;
     }
 
-    public function view(User $user, Task $task): Response
-    {
-
-        return $user->id === $task->user_id ? Response::allow() : Response::deny("you are not authorized");
-    }
+   
 }
