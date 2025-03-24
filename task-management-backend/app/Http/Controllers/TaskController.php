@@ -83,11 +83,7 @@ class TaskController extends Controller
     public function show($id)
     {   
         
-        // if($task->isEmpty()){
-        //     return FormatResponse::success($task,"Task not found" , 202);
-        // }
-
-        // return $id;
+       
 
         try{
             $givenTask = Task::findOrFail($id);
