@@ -5,10 +5,12 @@ import router from "./router";
 import axios from "axios";
 import VueAxios from "vue-axios";
 import "./assets/styles/tailwind.css";
+import store from "./store/store";
 
 import "./assets/main.css";
 
 new Vue({
+  store,
   router,
   render: (h) => h(App),
 }).$mount("#app");

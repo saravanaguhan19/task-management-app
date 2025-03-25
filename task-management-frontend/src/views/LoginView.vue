@@ -1,9 +1,9 @@
-<template>
+<!-- <template>
   <div class="max-w-md mx-auto mt-12 p-6 bg-white shadow-lg rounded-lg">
     <h2 class="text-2xl font-bold text-center mb-6">Login</h2>
 
     <form @submit.prevent="loginUser">
-      <!-- Email Input -->
+  
       <div class="mb-4">
         <input
           type="email"
@@ -15,7 +15,7 @@
         />
       </div>
 
-      <!-- Password Input -->
+    
       <div class="mb-4">
         <input
           type="password"
@@ -27,7 +27,7 @@
         />
       </div>
 
-      <!-- Submit Button -->
+      
       <div class="mb-4">
         <button
           type="submit"
@@ -38,7 +38,7 @@
         </button>
       </div>
 
-      <!-- Success or Error Message -->
+      
       <div
         v-if="message"
         :class="{ 'text-green-600': status, 'text-red-600': !status }"
@@ -105,4 +105,98 @@ export default {
 
 <style scoped>
 /* You can add custom styles here if needed */
-</style>
+</style> -->
+
+<template>
+  <div class="flex h-screen">
+    <!-- Image Section -->
+    <div class="w-1/2 bg-gray-100 flex items-center justify-center">
+      <img
+        src="/task-management.jpg"
+        alt="Task Management"
+        class="max-w-full h-auto"
+      />
+    </div>
+
+    <!-- Login Form Section -->
+    <div
+      class="w-1/2 flex flex-col justify-center items-center p-10 bg-white shadow-lg"
+    >
+      <h2 class="text-3xl font-semibold mb-6">Login</h2>
+      <form v-on:submit.prevent="handleLogin" class="w-full max-w-sm">
+        <div class="mb-4">
+          <label class="block text-gray-700">Email</label>
+          <input
+            v-model="email"
+            type="email"
+            required
+            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+          <span v-if="errors.email" class="text-red-500 text-sm">{{
+            errors.email
+          }}</span>
+        </div>
+        <div class="mb-4">
+          <label class="block text-gray-700">Password</label>
+          <input
+            v-model="password"
+            type="password"
+            required
+            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+          <span v-if="errors.password" class="text-red-500 text-sm">{{
+            errors.password
+          }}</span>
+        </div>
+        <button
+          type="submit"
+          class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-300"
+        >
+          Login
+        </button>
+      </form>
+    </div>
+  </div>
+</template>
+
+<script>
+import { mapActions } from "vuex";
+export default {
+  data() {
+    return {
+      email: "",
+      password: "",
+      errors: {},
+    };
+  },
+  methods: {
+    ...mapActions(["login"]),
+    validateForm() {
+      this.errors = {};
+      if (!this.email.includes("@")) {
+        this.errors.email = "Invalid email format";
+      }
+      if (this.password.length < 6) {
+        this.errors.password = "Password must be at least 6 characters";
+      }
+      return Object.keys(this.errors).length === 0;
+    },
+    async handleLogin() {
+      if (this.validateForm()) {
+        try {
+          console.log(this.$store);
+          await this.$store.dispatch("login", {
+            email: this.email,
+            password: this.password,
+          });
+          this.$router.push("/dashboard");
+        } catch (error) {
+          this.errors.general = error.message;
+        }
+      }
+    },
+  },
+};
+</script>
+
+<style scoped></style>
