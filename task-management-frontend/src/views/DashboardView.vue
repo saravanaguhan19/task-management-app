@@ -2,6 +2,7 @@
   <div class="p-4">
     <h2 class="text-2xl font-semibold mb-4">Hello from Dashboard</h2>
 
+    <CreateTask />
     <!-- Shimmer Loading State -->
     <div v-if="loading" class="space-y-4">
       <div class="bg-gray-300 animate-pulse h-6 rounded w-3/4"></div>
@@ -10,20 +11,15 @@
     </div>
 
     <!-- Task List -->
-    <ul v-if="tasks && tasks.length && !loading" class="space-y-4">
-      <li
+
+    <ul v-if="tasks && tasks.length" class="space-y-4">
+      <TaskItem
         v-for="task of tasks"
         :key="task.id"
         class="border p-4 rounded-lg shadow-md"
-      >
-        <div class="flex justify-between">
-          <span class="text-xl font-bold">{{ task.title }}</span>
-          <span class="text-gray-600 text-sm">{{
-            task.created_at | formatDate
-          }}</span>
-        </div>
-        <p class="mt-2 text-gray-700">{{ task.description }}</p>
-      </li>
+        :task="task"
+      />
+      <!-- </li> -->
     </ul>
 
     <!-- No Tasks Found -->
@@ -39,9 +35,8 @@
 </template>
 
 <script>
-// Import any date formatting utility you want
-import { format } from "date-fns";
-
+import TaskItem from "../components/TaskItem.vue";
+import CreateTask from "../components/CreateTask.vue";
 export default {
   data() {
     return {
@@ -50,32 +45,23 @@ export default {
       errorMessage: null,
     };
   },
-
-  async created() {
-    try {
-      const response = await this.axios.get("http://127.0.0.1:8000/api/tasks", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-
-      if (response.data.status) {
-        this.tasks = response.data.data;
-      } else {
-        this.errorMessage = "Failed to load tasks. Please try again later.";
-      }
-    } catch (error) {
-      this.errorMessage = "Something went wrong. Please try again.";
-    } finally {
-      this.loading = false;
-    }
+  computed: {
+    // getTasks() {
+    //   return this.$store.getters.tasks;
+    // },
+  },
+  components: {
+    TaskItem,
+    CreateTask,
   },
 
-  filters: {
-    formatDate(value) {
-      if (!value) return "";
-      return format(new Date(value), "MMMM dd, yyyy");
-    },
+  async created() {
+    await this.$store.dispatch("fetchTasks");
+    this.tasks = this.$store.getters.toDoTasks;
+
+    if (this.tasks) this.loading = false;
+
+    console.log(this.tasks, "this.tasks");
   },
 };
 </script>

@@ -18,5 +18,5 @@ new Vue({
 Vue.use(VueAxios, axios);
 
 // You can set the base URL for the API requests globally:
-axios.defaults.baseURL = "https://your-api-url.com";
+axios.defaults.baseURL = "http://127.0.0.1:8000";
 axios.defaults.headers.common["Accept"] = "application/json";

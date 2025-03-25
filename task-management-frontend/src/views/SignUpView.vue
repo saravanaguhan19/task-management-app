@@ -78,38 +78,45 @@ export default {
   },
   methods: {
     async registerUser() {
-      this.loading = true;
-      this.message = "";
-
-      const payload = {
-        name: this.user.name,
-        email: this.user.email,
-        password: this.user.password,
-      };
-
       try {
-        // Send API request to register user
-        const response = await this.$http.post(
-          "http://127.0.0.1:8000/api/register",
-          payload
-        );
+        this.loading = true;
+        this.message = "";
 
-        if (response.data.status) {
-          // Store token in local storage
-          localStorage.setItem("token", response.data.data.token);
+        const payload = {
+          name: this.user.name,
+          email: this.user.email,
+          password: this.user.password,
+        };
 
-          this.message = response.data.message;
-          this.status = true;
-        } else {
-          this.message = response.data.message;
-          this.status = false;
-        }
+        await this.$store.dispatch("register", payload);
+        // try {
+        //   // Send API request to register user
+        //   const response = await this.$http.post(
+        //     "http://127.0.0.1:8000/api/register",
+        //     payload
+        //   );
+        //   if (response.data.status) {
+        //     // Store token in local storage
+        //     localStorage.setItem("token", response.data.data.token);
+
+        //     this.message = response.data.message;
+        //     this.status = true;
+        //     this.$router.push("/dashboard");
+        //   } else {
+        //     this.message = response.data.message;
+        //     this.status = false;
+        //   }
+        // } catch (error) {
+        //   // Handle API errors
+        //   this.message = "Something went wrong. Please try again.";
+        //   this.status = false;
+        // } finally {
+        //   this.loading = false;
+        // }
+
+        this.$router.push("/login");
       } catch (error) {
-        // Handle API errors
-        this.message = "Something went wrong. Please try again.";
-        this.status = false;
-      } finally {
-        this.loading = false;
+        this.errors.general = error.message;
       }
     },
   },

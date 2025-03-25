@@ -1,7 +1,25 @@
+<!-- <template>
+  <nav class="">
+    <RouterLink to="/login">login</RouterLink>
+    <RouterLink to="/dashboard">Dashboard</RouterLink>
+    <RouterLink to="/signup">Signup</RouterLink>
+
+    <button v-on:click="handleLogout">Logout</button>
+  </nav>
+</template>
+<script>
+export default {
+  methods: {
+    handleLogout() {
+      this.$store.dispatch("logout");
+      this.$router.push("/login");
+    },
+  },
+};
+</script> -->
 <template>
   <nav
-    v-if="!isAuthPage"
-    class="bg-indigo-600 p-4 rounded-lg shadow-lg flex justify-between items-center"
+    class="bg-slate-400 p-4 rounded-lg shadow-lg flex justify-between items-center"
   >
     <!-- Left side navigation links -->
     <div class="flex space-x-4">
@@ -39,13 +57,6 @@
 
 <script>
 export default {
-  computed: {
-    // Check if the current route is login or signup
-    isAuthPage() {
-      const path = this.$route.path;
-      return path === "/login" || path === "/signup"; // Return true if we are on login or signup
-    },
-  },
   methods: {
     handleLogout() {
       this.$store.dispatch("logout");
@@ -56,5 +67,5 @@ export default {
 </script>
 
 <style scoped>
-/* Add custom styles if necessary */
+/* You can add any additional custom styling here if needed */
 </style>

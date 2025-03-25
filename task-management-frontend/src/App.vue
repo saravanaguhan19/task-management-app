@@ -1,18 +1,22 @@
-<script setup></script>
-
 <template>
   <div>
     <div id="app">
-      <nav>
-        <RouterLink to="/">Go to Home</RouterLink>
-        <RouterLink to="/about">Go to About</RouterLink>
-        <RouterLink to="/about">Go to About</RouterLink>
+      <!-- <nav>
+        <RouterLink to="/login">login</RouterLink>
         <RouterLink to="/dashboard">Dashboard</RouterLink>
-      </nav>
-
+        <button v-on:click="handleLogout">Logout</button>
+      </nav> -->
+      <NavComponent />
       <router-view />
     </div>
   </div>
 </template>
-
+<script>
+import NavComponent from "./components/NavComponent.vue";
+export default {
+  components: {
+    NavComponent,
+  },
+};
+</script>
 <style scoped></style>
